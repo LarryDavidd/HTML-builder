@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { stdout, stdin, exit } = process;
 
-const output = fs.createWriteStream("text.txt", "utf-8");
+const output = fs.createWriteStream("02-write-file/text.txt", "utf-8");
 
 stdout.write("Здравствуйте! \n");
 stdout.write("Введите, пожалуйста, любой текст \n");
