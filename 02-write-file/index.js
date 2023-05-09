@@ -15,3 +15,4 @@ stdin.on("data", (data) => {
 });
 
 process.on("exit", () => stdout.write("Удачи!"));
+process.on('SIGINT', () => exit());
