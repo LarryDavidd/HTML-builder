@@ -110,11 +110,9 @@ function writeStream(folder, outputFile) {
 
 async function combineHTML() {
   let template = await fs.promises.readFile(path.join(__dirname, 'template.html'), "utf-8", callback);
-  console.log(template);
   await fs.readdir("./06-build-page/components", { withFileTypes: true }, (err, files) => {
     if (err) throw err;
     files.forEach(file => {
-      console.log(file);
       fs.readFile(path.join(__dirname, 'components', file.name), "utf-8", (err,text) => {
         template = template.replace(`{{${file.name.split('.')[0]}}}`, `${text}`);
         fs.writeFile(path.join(__dirname, 'project-dist', 'index.html'), template, callback);
