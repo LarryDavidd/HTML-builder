@@ -19,9 +19,7 @@ function copyDir(testFolder) {
             );
           }
         });
-      } else {
-        copyDir(url);
-      }
+      };
     });
   });
 }
