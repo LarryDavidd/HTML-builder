@@ -24,6 +24,7 @@ function copyDir(testFolder) {
   });
 }
 
+
 const testFolder = "./03-files-in-folder/secret-folder/";
 const fs = require("fs");
 const path = require("path");
