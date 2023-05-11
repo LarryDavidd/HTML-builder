@@ -4,34 +4,34 @@ function callback(err) {
 }
 
 function copyFiles(url) {
-  fs.readdir("./06-build-page/" + url, { withFileTypes: true }, (err, files) => {
+  fs.readdir(path.join(__dirname, url), { withFileTypes: true }, (err, files) => {
     files.forEach((file) => {
       if (file.isFile()) {
         fs.copyFile(
-          "./06-build-page/" + url + "/" + file.name,
-          "./06-build-page/project-dist/" + url + "/" + file.name,
+          path.join(__dirname, url, file.name),
+          path.join(__dirname, 'project-dist', url, file.name),
           callback
         );
       } else {
-        createFolder(url + "/" + file.name);
+        createFolder(path.join(url, file.name));
       }
     });
   });
 }
 
 function createFolder(url) {
-  fs.mkdir("./06-build-page/project-dist/" + url, { recursive: true }, (err) => {
+  fs.mkdir(path.join(__dirname, 'project-dist', url), { recursive: true }, (err) => {
     if (err) throw err;
     console.log("folder was copied");
   });
   copyFiles(url);
 }
 
-function writeStream(folder, outputFile) {
-  const output = fs.createWriteStream(outputFile);
-  fs.readdir(folder, { withFileTypes: true }, (err, files) => {
+function writeStream() {
+  const output = fs.createWriteStream(path.join(__dirname, 'project-dist', 'styles.css'));
+  fs.readdir(path.join(__dirname, 'styles'), { withFileTypes: true }, (err, files) => {
     files.forEach((file) => {
-      url = folder + file.name;
+      url = path.join(__dirname, 'styles', file.name);
       const input = fs.createReadStream(url, "utf-8");
       if (path.extname(file.name).slice(1) == "css") {
         input.on("data", (chunk) => output.write(chunk));
@@ -43,7 +43,7 @@ function writeStream(folder, outputFile) {
 
 async function combineHTML() {
   let template = await fs.promises.readFile(path.join(__dirname, 'template.html'), "utf-8", callback);
-  await fs.readdir("./06-build-page/components", { withFileTypes: true }, (err, files) => {
+  await fs.readdir(path.join(__dirname, 'components'), { withFileTypes: true }, (err, files) => {
     if (err) throw err;
     files.forEach(file => {
       fs.readFile(path.join(__dirname, 'components', file.name), "utf-8", (err,text) => {
@@ -62,21 +62,19 @@ const path = require("path");
 
 combineHTML();
 
-fs.mkdir("./06-build-page/project-dist", { recursive: true }, (err) => {
+fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, (err) => {
   if (err) throw err;
   console.log("folder was copied");
 });
 
 createFolder("assets");
 
-const mainFolder = "./06-build-page/styles/";
-const outputFile = "./06-build-page/project-dist/styles.css";
 
-writeStream(mainFolder, outputFile);
+writeStream();
 
 
 let document = "";
-const input = fs.createReadStream("./06-build-page/template.html", "utf-8");
+const input = fs.createReadStream(path.join(__dirname, 'template.html'), "utf-8");
 input.on("data", (chunk) => {
   document += chunk;
 });

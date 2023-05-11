@@ -1,7 +1,7 @@
 function copyDir(testFolder) {
   fs.readdir(testFolder, { withFileTypes: true }, (err, files) => {
     files.forEach((file) => {
-      url = testFolder + "\\" + file.name;
+      url = path.join(__dirname, 'secret-folder', file.name);
 
       if (file.isFile()) {
         fs.stat(url, (e, statfile) => {
@@ -25,8 +25,8 @@ function copyDir(testFolder) {
 }
 
 
-const testFolder = "./03-files-in-folder/secret-folder/";
 const fs = require("fs");
 const path = require("path");
+const testFolder = path.join(__dirname, 'secret-folder');
 
 copyDir(testFolder);
