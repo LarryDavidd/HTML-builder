@@ -3,8 +3,8 @@ function callback(err) {
   console.log("file was copied");
 }
 
-function copyFiles(url) {
-  fs.readdir(path.join(__dirname, url), { withFileTypes: true }, (err, files) => {
+async function copyFiles(url) {
+  await fs.readdir(path.join(__dirname, url), { withFileTypes: true }, (err, files) => {
     files.forEach((file) => {
       if (file.isFile()) {
         fs.copyFile(
@@ -19,17 +19,22 @@ function copyFiles(url) {
   });
 }
 
-function createFolder(url) {
-  fs.mkdir(path.join(__dirname, 'project-dist', url), { recursive: true }, (err) => {
+async function createFolder(url) {
+  await fs.mkdir(path.join(__dirname, 'project-dist', url), { recursive: true }, (err) => {
     if (err) throw err;
     console.log("folder was copied");
   });
-  copyFiles(url);
+  
+  await copyFiles(url);
+  
+  await writeStream();
+  
+  await combineHTML();
 }
 
-function writeStream() {
-  const output = fs.createWriteStream(path.join(__dirname, 'project-dist', 'styles.css'));
-  fs.readdir(path.join(__dirname, 'styles'), { withFileTypes: true }, (err, files) => {
+async function writeStream() {
+  const output = await fs.createWriteStream(path.join(__dirname, 'project-dist', 'styles.css'));
+  await fs.readdir(path.join(__dirname, 'styles'), { withFileTypes: true }, (err, files) => {
     files.forEach((file) => {
       url = path.join(__dirname, 'styles', file.name);
       const input = fs.createReadStream(url, "utf-8");
@@ -50,7 +55,7 @@ async function combineHTML() {
         template = template.replace(`{{${file.name.split('.')[0]}}}`, `${text}`);
         fs.writeFile(path.join(__dirname, 'project-dist', 'index.html'), template, callback);
       });
-
+      
       // let htmlFile = fs.promises.readFile(path.join(__dirname, 'components', file.name), "utf-8", callback);
     });
   });
@@ -64,21 +69,17 @@ const path = require("path");
 fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, (err) => {
   if (err) throw err;
   console.log("folder was copied");
+  createFolder("assets");
 });
 
-createFolder("assets");
-
-combineHTML();
-
-writeStream();
 
 
-let document = "";
-const input = fs.createReadStream(path.join(__dirname, 'template.html'), "utf-8");
-input.on("data", (chunk) => {
-  document += chunk;
-});
-input.on("error", (error) => console.log("Error", error.message));
-input.on("end", () => {
-  console.log("End", document.length);
-});
+// let document = "";
+// const input = fs.createReadStream(path.join(__dirname, 'template.html'), "utf-8");
+// input.on("data", (chunk) => {
+//   document += chunk;
+// });
+// input.on("error", (error) => console.log("Error", error.message));
+// input.on("end", () => {
+//   console.log("End", document.length);
+// });
