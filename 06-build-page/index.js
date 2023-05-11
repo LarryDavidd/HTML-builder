@@ -60,7 +60,6 @@ async function combineHTML() {
 const fs = require("fs");
 const path = require("path");
 
-combineHTML();
 
 fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, (err) => {
   if (err) throw err;
@@ -69,6 +68,7 @@ fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, (err) => {
 
 createFolder("assets");
 
+combineHTML();
 
 writeStream();
 
